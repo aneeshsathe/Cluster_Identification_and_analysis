@@ -18,7 +18,7 @@ for file_count=1:length(bf_file)
     position = wait( h );
     BW = createMask( h );
     count=0;
-    while sum(BW(:)) > 300 % less than 10 pixels is considered empty mask
+    while sum(BW(:)) > 300 % less than 300 pixels is considered empty mask
         count=count+1;
         pro_totMask(BW) = count; % add mask to global mask
         % you might want to consider removing the old imfreehand object:
