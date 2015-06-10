@@ -2,7 +2,7 @@ clear;clc;
 tic
 %%
 
-fold_path='E:\Ephrin\20150512_if\SKOV3\20150528\';
+fold_path='Y:\Andrea_EPH_cluster\Data\';
 
 %set Thresh for bw
 in_bw_thresh=0.65;
@@ -66,9 +66,9 @@ for file_count=1:length(bf_file)
     totMask=imread([fold_path,ot_file(file_count).name]);
     %     totMask=imread(out_file_name,'Index',file_count);
     
-    [out_im1,out_im2,out_im3,out_im4]=deal(zeros(size(totMask)));
+    [out_im1,out_im2,temp_im,out_im3,out_im4]=deal(zeros(size(totMask)));
     
-    pix_list=regionprops(totMask,'PixelIdxList','BoundingBox','Image','Centroid');
+    pix_list=regionprops(totMask,'PixelIdxList','BoundingBox','Image','Centroid','SubarrayIdx');
     
     for obj_count=1:length(pix_list)
         
@@ -92,10 +92,30 @@ for file_count=1:length(bf_file)
         y_list=bb(1):bb(1)+bb(3);
         x_list=bb(2):bb(2)+bb(4);
         
-        out_im1(x_list,y_list)=imadjust(imcrop(fl_img,bb)).*pix_list(obj_count).Image;
-        out_im2(x_list,y_list)=temp_cl_img;
-        out_im3(x_list,y_list)=out_img;
-        out_im4(x_list,y_list)=imadjust(imcrop(fl_img,bb)).* out_img;
+        
+        %         temp_im_store=@(in_img,out_im) temp_im_store(temp_im, in_img,out_im,x_list,y_list,pix_list(obj_count).PixelIdxList );
+        
+        
+        out_im1=temp_im_store( imadjust(imcrop(fl_img,bb)).*pix_list(obj_count).Image, out_im1, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        out_im2=temp_im_store( temp_cl_img, out_im2, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        out_im3=temp_im_store( out_img, out_im3, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        out_im4=temp_im_store( imadjust(imcrop(fl_img,bb)).* out_img, out_im4, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        
+        
+        
+        
+        
+        
+        
+%         out_im1(x_list,y_list)=imadjust(imcrop(fl_img,bb)).*pix_list(obj_count).Image;
+        %         temp_im(x_list,y_list)=temp_cl_img;
+        
+        %         out_im2(pix_list(obj_count).PixelIdxList)=temp_im(pix_list(obj_count).PixelIdxList);
+%         out_im2=temp_im_store( temp_cl_img, out_im2, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        % out_im2=temp_im_store(temp_cl_img,out_im2);
+        %         out_im2(pix_list(obj_count).PixelIdxList)=temp_cl_img(pix_list(obj_count).SubarrayIdx);
+%         out_im3(x_list,y_list)=out_img;
+%         out_im4(x_list,y_list)=imadjust(imcrop(fl_img,bb)).* out_img;
         %         imwrite(out_im,[img_write_path,'cell_',num2str(obj_count),'_',fluo_name],'tif')
         
         if file_count==1&&obj_count==1

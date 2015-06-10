@@ -15,17 +15,18 @@ bw_props=regionprops(bwareaopen(in_img,area_th),fl_img,...
 
 thresh_fields=fieldnames(in_thresh);
 
-clus_round = mat2cell((4*[bw_props.Area]*pi./[bw_props.Perimeter].^2), 1, ones(1, 1, numel(bw_props)));
-
-[bw_props(1:numel(bw_props)).Roundness] = deal(clus_round{:});
-
+if ~isempty(bw_props)
+    clus_round = mat2cell((4*[bw_props.Area]*pi./[bw_props.Perimeter].^2), 1, ones(1, 1, numel(bw_props)));
+    
+    [bw_props(1:numel(bw_props)).Roundness] = deal(clus_round{:});
+end
 
 
 for count=1:length(bw_props)
     %     bw_props(count).Roundness=(4*bw_props(count).Area*pi)/(bw_props(count).Perimeter.^2);
     
     pick_region=zeros(1,numel(thresh_fields));
-    for t_count=1:numel(thresh_fields)        
+    for t_count=1:numel(thresh_fields)
         
         if bw_props(count).(thresh_fields{t_count})>=in_thresh.(thresh_fields{t_count})
             pick_region(t_count)=1;
