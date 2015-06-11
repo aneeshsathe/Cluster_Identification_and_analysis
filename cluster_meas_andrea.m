@@ -2,7 +2,7 @@ clear;clc;
 tic
 %%
 
-fold_path='Y:\Andrea_EPH_cluster\Data\';
+fold_path='C:\Users\Aneesh\Desktop\attachments\';
 
 %set Thresh for bw
 in_bw_thresh=0.65;
@@ -72,16 +72,25 @@ for file_count=1:length(bf_file)
     
     for obj_count=1:length(pix_list)
         
+        %         bb=[floor(pix_list(obj_count).BoundingBox(1)),...
+        %             floor(pix_list(obj_count).BoundingBox(2)),...
+        %             floor(pix_list(obj_count).BoundingBox(3))-1,...
+        %             floor(pix_list(obj_count).BoundingBox(4))-1];
         bb=[floor(pix_list(obj_count).BoundingBox(1)),...
             floor(pix_list(obj_count).BoundingBox(2)),...
-            floor(pix_list(obj_count).BoundingBox(3))-1,...
-            floor(pix_list(obj_count).BoundingBox(4))-1];
+            floor(pix_list(obj_count).BoundingBox(3)),...
+            floor(pix_list(obj_count).BoundingBox(4))];
         
         %         size(imcrop(fl_img,bb))
         %         size(pix_list(obj_count).Image)
         %         temp_cl_img2=imcrop(fl_img,bb).*pix_list(obj_count).Image;
         %         temp_cl_img=an_gray(imadjust(imcrop(fl_img,bb))).*pix_list(obj_count).Image;
-        crop_im=imcrop(fl_img,bb);
+        
+        crop_im=fl_img(pix_list(obj_count).SubarrayIdx{:}) ;
+        raw_crop_im=fl_img_raw(pix_list(obj_count).SubarrayIdx{:}) ;
+        
+        %         crop_im=imcrop(fl_img,bb);
+        
         temp_cl_img=imfilter(imadjust(crop_im),myfilter, 'replicate');
         %         temp_cl_img=an_gray(adapthisteq(temp_cl_img,'NumTiles',lcep,'Distribution','rayleigh')).*pix_list(obj_count).Image;
         temp_cl_img=an_andr_gray(adapthisteq(temp_cl_img,'NumTiles',lcep,'Distribution','rayleigh'),in_bw_thresh).*pix_list(obj_count).Image;
@@ -89,39 +98,44 @@ for file_count=1:length(bf_file)
         out_img =an_clean_obj_andrea( temp_cl_img,mat2gray(crop_im),in_thresh);
         
         
-        y_list=bb(1):bb(1)+bb(3);
-        x_list=bb(2):bb(2)+bb(4);
+        %         y_list=bb(1):bb(1)+bb(3);
+        %         x_list=bb(2):bb(2)+bb(4);
+        x_list=pix_list(obj_count).SubarrayIdx{1};
+        y_list=pix_list(obj_count).SubarrayIdx{2};
         
         
         %         temp_im_store=@(in_img,out_im) temp_im_store(temp_im, in_img,out_im,x_list,y_list,pix_list(obj_count).PixelIdxList );
         
         
-        out_im1=temp_im_store( imadjust(imcrop(fl_img,bb)).*pix_list(obj_count).Image, out_im1, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        out_im1=temp_im_store( imadjust(crop_im).*pix_list(obj_count).Image, out_im1, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
         out_im2=temp_im_store( temp_cl_img, out_im2, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
         out_im3=temp_im_store( out_img, out_im3, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
-        out_im4=temp_im_store( imadjust(imcrop(fl_img,bb)).* out_img, out_im4, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        out_im4=temp_im_store( imadjust(crop_im).* out_img, out_im4, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        
+        %         out_im1(pix_list(obj_count).PixelIdxList )=imadjust(crop_im).*pix_list(obj_count).Image;
+        %         out_im2(pix_list(obj_count).PixelIdxList )=temp_cl_img;
+        %         out_im3(pix_list(obj_count).PixelIdxList )=out_img;
+        %         out_im4(pix_list(obj_count).PixelIdxList )=imadjust(crop_im).* out_img;
         
         
         
         
         
-        
-        
-%         out_im1(x_list,y_list)=imadjust(imcrop(fl_img,bb)).*pix_list(obj_count).Image;
+        %         out_im1(x_list,y_list)=imadjust(imcrop(fl_img,bb)).*pix_list(obj_count).Image;
         %         temp_im(x_list,y_list)=temp_cl_img;
         
         %         out_im2(pix_list(obj_count).PixelIdxList)=temp_im(pix_list(obj_count).PixelIdxList);
-%         out_im2=temp_im_store( temp_cl_img, out_im2, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
+        %         out_im2=temp_im_store( temp_cl_img, out_im2, temp_im, x_list, y_list, pix_list(obj_count).PixelIdxList );
         % out_im2=temp_im_store(temp_cl_img,out_im2);
         %         out_im2(pix_list(obj_count).PixelIdxList)=temp_cl_img(pix_list(obj_count).SubarrayIdx);
-%         out_im3(x_list,y_list)=out_img;
-%         out_im4(x_list,y_list)=imadjust(imcrop(fl_img,bb)).* out_img;
+        %         out_im3(x_list,y_list)=out_img;
+        %         out_im4(x_list,y_list)=imadjust(imcrop(fl_img,bb)).* out_img;
         %         imwrite(out_im,[img_write_path,'cell_',num2str(obj_count),'_',fluo_name],'tif')
         
         if file_count==1&&obj_count==1
-            [Sheet1T,Sheet2T] = an_write_excel_andrea( out_img, imcrop(fl_img_raw,bb),fluo_name,obj_count );
+            [Sheet1T,Sheet2T] = an_write_excel_andrea( out_img, raw_crop_im,fluo_name,obj_count );
         else
-            [out_table1,out_table2] = an_write_excel_andrea( out_img,  imcrop(fl_img_raw,bb),fluo_name,obj_count );
+            [out_table1,out_table2] = an_write_excel_andrea( out_img,  raw_crop_im,fluo_name,obj_count );
             Sheet1T=[Sheet1T;out_table1];
             Sheet2T=[Sheet2T;out_table2];
         end
