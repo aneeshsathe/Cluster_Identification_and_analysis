@@ -30,7 +30,7 @@ clus_mean=0;
 clus_min= 0;
 clus_max= 0;
 clus_median= 0;
-cell_clus_prop= 0;
+cell_clus_prop= {0};
 end
 
 % out_table1=table({fluo_name},obj_count,clus_num, clus_sum_area,clus_mean,clus_min,clus_max,clus_median,cell_clus_prop(:)');
