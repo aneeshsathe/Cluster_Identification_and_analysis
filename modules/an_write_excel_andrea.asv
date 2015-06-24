@@ -13,37 +13,21 @@ clus_num=numel(in_props2);
 
 FileName=repmat({fluo_name},clus_num,1);
 CellNo=repmat(obj_count,clus_num,1);
-
 ClusterNo=(1:clus_num)';
-if clus_num>0
-% ClusterNo=(1:clus_num)';
 clus_sum_area= sum([in_props2(:).Area]);
 clus_mean=mean([in_props2(:).Area]);
 clus_min= min([in_props2(:).Area]);
 clus_max= max([in_props2(:).Area]);
 clus_median= median([in_props2(:).Area]);
-cell_clus_prop= {in_props2(:).Area};
-else
-%     ClusterNo=0;
-clus_sum_area= 0;
-clus_mean=0;
-clus_min= 0;
-clus_max= 0;
-clus_median= 0;
-cell_clus_prop= 0;
-end
+cell_clus_prop= ([in_props2(:).Area]);
+
 
 % out_table1=table({fluo_name},obj_count,clus_num, clus_sum_area,clus_mean,clus_min,clus_max,clus_median,cell_clus_prop(:)');
-% numel(cell_clus_prop)>1
-if numel(cell_clus_prop)>1
 out_table1=[table({fluo_name},obj_count,clus_num, clus_sum_area,clus_mean,clus_min,clus_max,clus_median, ...
     'VariableNames',{'FileName','CellNo','NoOfClusters','TotalArea','MeanArea','MinArea','MaxArea', 'MedianArea'}),...
-    cell2table(cell_clus_prop,'VariableNames',strseq('AreaClusNo',1:numel(cell_clus_prop)))];
-else
-    out_table1=[table({fluo_name},obj_count,clus_num, clus_sum_area,clus_mean,clus_min,clus_max,clus_median, ...
-    'VariableNames',{'FileName','CellNo','NoOfClusters','TotalArea','MeanArea','MinArea','MaxArea', 'MedianArea'}),...
-    table(cell_clus_prop{:},'VariableNames',strseq('AreaClusNo',1:numel(cell_clus_prop)))];
-end
+    table(cell_clus_prop,'VariableNames',{strseq('AreaClusNo',1:numel(cell_clus_prop))')];
+table({fluo_name},obj_count,clus_num, clus_sum_area,clus_mean,...
+    clus_min,clus_max,clus_median,cell_clus_prop)
 
 
 out_table2=table(FileName,CellNo, ClusterNo,Intensity);

@@ -2,12 +2,12 @@ clear;clc;
 tic
 %%
 
-fold_path='C:\Users\Aneesh\Desktop\attachments\';
+fold_path='C:\Users\Nyx\Desktop\attachments\';
 
 %set Thresh for bw
-in_bw_thresh=0.65;
+in_bw_thresh=0.5;
 
-in_thresh.Area=2000;
+in_thresh.Area=100;
 % in_thresh.MajorAxisLength=5;
 % in_thresh.MinorAxisLength=5;
 % in_thresh.MeanIntensity=0.1;
@@ -136,7 +136,10 @@ for file_count=1:length(bf_file)
             [Sheet1T,Sheet2T] = an_write_excel_andrea( out_img, raw_crop_im,fluo_name,obj_count );
         else
             [out_table1,out_table2] = an_write_excel_andrea( out_img,  raw_crop_im,fluo_name,obj_count );
+            
+            [ Sheet1T,out_table1 ] = an_andrea_add_missing( Sheet1T,out_table1 );
             Sheet1T=[Sheet1T;out_table1];
+            [ Sheet2T,out_table2 ] = an_andrea_add_missing( Sheet2T,out_table2 );
             Sheet2T=[Sheet2T;out_table2];
         end
         
@@ -147,6 +150,12 @@ for file_count=1:length(bf_file)
     
 end
 
+%% Prepare summary of 
+% out_table1colmissing = setdiff(Sheet1T.Properties.VariableNames, out_table1.Properties.VariableNames);
+% Sheet1Tcolmissing = setdiff(out_table1.Properties.VariableNames, Sheet1T.Properties.VariableNames);
+% out_table1 = [out_table1 array2table(nan(height(out_table1), numel(out_table1colmissing)), 'VariableNames', out_table1colmissing)];
+% Sheet1T = [Sheet1T array2table(nan(height(Sheet1T), numel(Sheet1Tcolmissing)), 'VariableNames', Sheet1Tcolmissing)];
+% [Sheet1T;out_table1]
 %% Write Excel
 xls_name=[img_write_path,'results_',date,'.xlsx'];
 warning('off','MATLAB:xlswrite:AddSheet');
